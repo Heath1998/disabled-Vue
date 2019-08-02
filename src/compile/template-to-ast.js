@@ -64,12 +64,55 @@ function parseHTML() {
       advance(tagStart[0].length)
       let tagEndClose, attr
 
-      while(!(tagEndClose = html.match(startTagClose))) {
-        
+      // 获取开始标签结束符是否是这样的 >，若是直接退出while。 获取当前标签的属性值如：id=app，或@click=clickEvent用match匹配
+      // [" />", "/", index: 0, input: " />"]
+      // [" >", "", index: 0, input: " >"]
+      // 这样的形式["href='https://www.imliutao.com'", "href", "=", undefined, "https://www.imliutao.com", undefined, index: 0, input: "href='https://www.imliutao.com'"]
+      while(!(tagEndClose = html.match(startTagClose)) && (attr = html.match(attribute))) {
+        // 获取标签内的属性
+        advance(atrr[0].length)
+        match.attrs.push(attr)
       }
+
+      // 若开始标签的结束符 > 存在，就可以给当前match增加属性 
+      if (tagEndClose) {
+        match.unarySlash = tagEndClose[1]
+        advance(tagEndClose[0].length)
+        match.end = index
+      }
+
+      // 判断是不是单标签
+      const unary = options.isUnaryTag(match.tagName) || !match.unarySlash
+
+      // 将属性的match匹配的数组转换为正确格式的属性{name：“”， value：“”}形式
+      match.attrs = match.attrs.map(item => {
+        return {
+          name: item[1],
+          value: item[2] || item[3] || item [4] || true
+        }
+      })
+
+      // 存入stack二元标签元素，并赋值结尾标签lastTag的标签值
+      if (!unary) {
+        stack.push({tag: match.tagName, attrs: match.attrs})
+        lastTag = match.tagName
+      }
+
+      // 生成真正的元素
+      if (options.start) {
+        options.start(match.tagName, match.attrs, unary, match.start, match.end)
+      }
+    }
+    if (text) {
+      options.chars(text)
     }
   }
 
+  // index加上匹配的长度的， html切割去掉已匹配的
+  function advance(inx) {
+    idnex += inx
+    html = html.slice(inx)
+  }
 
 
 }
