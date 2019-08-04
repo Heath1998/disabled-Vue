@@ -17,7 +17,7 @@ export default function (Vue) {
 
     //处理methods compited,data,watch
     //依赖收集
-    initState(vm)
+    // initState(vm)
 
     if(vm.$options.el) {
       vm.$mount(vm.$options.el)

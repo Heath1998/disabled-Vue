@@ -1,6 +1,6 @@
 
 // 将Vue实例vm的vm.key映射到$options.data上的key上
-export default function (obj, vm) {
+export function proxy (obj, vm) {
   Object.keys(obj).forEach(key => {
     Object.defineProperty(vm, key, {
       get() {

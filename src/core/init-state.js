@@ -1,7 +1,7 @@
 import {isArray, defineReactive, proxy} from '../utils'
 import {isObject} from '../utils'
-import Watcher from './watcher'
-import Dep from './dep'
+// import Watcher from './watcher'
+// import Dep from './dep'
 
 export default function (vm) {
   // vm._watchers = []
